@@ -41,7 +41,10 @@ export default function App() {
         <Stack.Screen 
           name="Chat"
           component={Chat}
-        />
+        >
+          {/* Passing the database on to the chats screen */}
+          {props => <Chat db={db} {...props} />}
+        </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );

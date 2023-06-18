@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { Bubble, GiftedChat } from 'react-native-gifted-chat';
+//Import get data functions from Firestore
+import { collection, getDocs } from "firebase/firestore";
+import { async } from '@firebase/util';
 
-const Chat = ({ route, navigation }) => {
+const Chat = ({ route, navigation, db }) => {
   //Get username and background color form route parameters
   const { username, backgroundColor } = route.params;
   //Messages state
@@ -26,32 +29,25 @@ const Chat = ({ route, navigation }) => {
     />
   };
 
+  //ASYNC: Fetch messages function; called in useEffect below
+  const fetchMessages = async () => {
+    const messagesDocuments = await getDocs(collection(db, "messages"));
+    let newMessages = [];
+    messagesDocuments.forEach(docObject => {
+    newMessages.push({ id: docObject.id, ... docObject.data() })
+    });
+    setMessages(newMessages);
+  };
+
   //Set navigation title to username
   useEffect(() => {
     navigation.setOptions({ title: username });
   }, []);
 
-  //Pull in messages; sample messages for now
+  //Get messages from Firestore
   useEffect(()=> {
-    setMessages([
-      {
-        _id: 1,
-        text: "Hello developer",
-        createAt: new Date(),
-        user: {
-          _id: 2,
-          name: "React Native",
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      },
-      {
-        _id: 2,
-        text: 'This is a system message',
-        createdAt: new Date(),
-        system: true,
-      },
-    ]);
-  }, []);
+    fetchMessages();
+  }, [JSON.stringify(messages)]);//compare string representations of messages array
 
   //Render chat UI
   return (
