@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ImageBackground, StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { ImageBackground, StyleSheet, View, Text, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
 
 const Start = ({ navigation }) => {
   //Get background image from local assets folder
@@ -87,6 +87,8 @@ const Start = ({ navigation }) => {
          </View>
        </View>
      </ImageBackground>
+     {/* Keyboard-Fix for iOS */}
+     {Platform.OS === 'ios' ? <KeyboardAvoidingView behavior='padding' /> : null}
    </View>
  );
 };
