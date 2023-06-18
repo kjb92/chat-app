@@ -34,7 +34,12 @@ const Chat = ({ route, navigation, db }) => {
     const messagesDocuments = await getDocs(collection(db, "messages"));
     let newMessages = [];
     messagesDocuments.forEach(docObject => {
-    newMessages.push({ id: docObject.id, ... docObject.data() })
+    newMessages.push({ 
+      _id: docObject.id,
+      text: docObject.text,
+      createdAt: new Date(docObject.createdAt), 
+      ... docObject.data() 
+    })
     });
     setMessages(newMessages);
   };
