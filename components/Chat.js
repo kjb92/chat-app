@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, View, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { Bubble, GiftedChat } from 'react-native-gifted-chat';
 //Import get data functions from Firestore
-import { collection, addDoc, onSnapshot, query } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
 
 const Chat = ({ route, navigation, db }) => {
   //Get username and background color form route parameters
@@ -40,17 +40,16 @@ const Chat = ({ route, navigation, db }) => {
 
   //Get messages from Firestore
   useEffect(()=> {
-    const q = () => {
-      query(collection(db, "messages"), orderBy("createdAt", "desc"));
-    };
-
-    const unsubMessages = onSnapshot(q, (documentsSnapshot) => {
+    //define the query
+    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+    //define the snapshop function
+    const unsubMessages = onSnapshot(q, (querySnapshot) => {
       let newMessages = [];
-      documentsSnapshot.forEach(doc => {
+      querySnapshot.forEach(doc => {
         newMessages.push({ 
           _id: doc.id,
           text: doc.text,
-          createdAt: new Date(doc.createdAt.UTC(2016, 5, 11, 17, 20, 0)), 
+          createdAt: new Date(doc.createdAt), 
           ... doc.data() 
         })
       });
