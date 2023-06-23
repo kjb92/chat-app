@@ -2,19 +2,18 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, View, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { Bubble, GiftedChat } from 'react-native-gifted-chat';
 //Import get data functions from Firestore
-import { collection, doc, getDocs, addDoc, setDoc, Timestamp, onSnapshot } from "firebase/firestore";
-import { async } from '@firebase/util';
+import { collection, doc, getDocs, addDoc, setDoc, Timestamp, onSnapshot, query, where } from "firebase/firestore";
 
 const Chat = ({ route, navigation, db }) => {
   //Get username and background color form route parameters
-  const { username, backgroundColor } = route.params;
+  const { username, backgroundColor, userID } = route.params;
   //Messages state
   const [messages, setMessages] = useState([]);
   
   //Send function
   const onSend = (newMessages) => {
     //TBD: addDoc in Forestore
-    addMessage(newMessages[0]);
+    addDoc(collection(db, "messages"), newMessages[0])
     //Update messages
     setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages))
     };
@@ -34,31 +33,31 @@ const Chat = ({ route, navigation, db }) => {
     />
   };
 
-  //ASYNC: Fetch messages function; called in useEffect below
-  const fetchMessages = async () => {
-    const messagesDocuments = await getDocs(collection(db, "messages"));
-    let newMessages = [];
-    messagesDocuments.forEach(docObject => {
-    newMessages.push({ 
-      _id: docObject.id,
-      text: docObject.text,
-      createdAt: new Date(docObject.createdAt), 
-      ... docObject.data() 
-    })
-    });
-    setMessages(newMessages);
-  };
+  //DEPRECATED: Fetch messages function; called in useEffect below
+  // const fetchMessages = async () => {
+  //   const messagesDocuments = await getDocs(collection(db, "messages"));
+  //   let newMessages = [];
+  //   messagesDocuments.forEach(docObject => {
+  //   newMessages.push({ 
+  //     _id: docObject.id,
+  //     text: docObject.text,
+  //     createdAt: new Date(docObject.createdAt), 
+  //     ... docObject.data() 
+  //   })
+  //   });
+  //   setMessages(newMessages);
+  // };
 
-  //ASYNC: Add message
-  const addMessage = async (newMessage) => {
-    const newMessageRef = await addDoc(collection(db, "messages"), newMessage);
-    if (newMessageRef.id) {
-      //Delete after test phase for better UX
-      Alert.alert(`New message ${newMessage.text} added`);
-    } else {
-      Alert.alert(`Unable to add message. Please try later`);
-    }
-  };
+  //DEPRECATED: Add message - async
+  // const addMessage = async (newMessage) => {
+  //   const newMessageRef = await addDoc(collection(db, "messages"), newMessage);
+  //   if (newMessageRef.id) {
+  //     //Delete after test phase for better UX
+  //     Alert.alert(`New message ${newMessage.text} added`);
+  //   } else {
+  //     Alert.alert(`Unable to add message. Please try later`);
+  //   }
+  // };
 
   //Set navigation title to username
   useEffect(() => {
@@ -67,13 +66,17 @@ const Chat = ({ route, navigation, db }) => {
 
   //Get messages from Firestore
   useEffect(()=> {
-    const unsubMessages = onSnapshot(collection(db, "messages"), (documentsSnapshot) => {
+    const q = () => {
+      query(collection(db, "messages"), orderBy("createdAt", "desc"));
+    };
+
+    const unsubMessages = onSnapshot(q, (documentsSnapshot) => {
       let newMessages = [];
       documentsSnapshot.forEach(doc => {
         newMessages.push({ 
           _id: doc.id,
           text: doc.text,
-          createdAt: new Date(doc.createdAt), 
+          createdAt: new Date(doc.createdAt.UTC(2016, 5, 11, 17, 20, 0)), 
           ... doc.data() 
         })
       });
