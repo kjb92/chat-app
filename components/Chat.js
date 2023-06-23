@@ -67,8 +67,24 @@ const Chat = ({ route, navigation, db }) => {
 
   //Get messages from Firestore
   useEffect(()=> {
-    fetchMessages();
-  }, [JSON.stringify(messages)]);//compare string representations of messages array
+    const unsubMessages = onSnapshot(collection(db, "messages"), (documentsSnapshot) => {
+      let newMessages = [];
+      documentsSnapshot.forEach(doc => {
+        newMessages.push({ 
+          _id: doc.id,
+          text: doc.text,
+          createdAt: new Date(doc.createdAt), 
+          ... doc.data() 
+        })
+      });
+      setMessages(newMessages);
+    });
+
+    //Clean up code and protection against call failure
+    return () => {
+      if (unsubMessages) unsubMessages();
+    }
+  }, []);
 
   //Render chat UI
   return (
