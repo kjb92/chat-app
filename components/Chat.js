@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, View, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { Bubble, GiftedChat } from 'react-native-gifted-chat';
 //Import get data functions from Firestore
-import { collection, doc, getDocs, addDoc, setDoc, Timestamp, onSnapshot, query, where } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, query } from "firebase/firestore";
 
 const Chat = ({ route, navigation, db }) => {
   //Get username and background color form route parameters
@@ -32,32 +32,6 @@ const Chat = ({ route, navigation, db }) => {
       }}
     />
   };
-
-  //DEPRECATED: Fetch messages function; called in useEffect below
-  // const fetchMessages = async () => {
-  //   const messagesDocuments = await getDocs(collection(db, "messages"));
-  //   let newMessages = [];
-  //   messagesDocuments.forEach(docObject => {
-  //   newMessages.push({ 
-  //     _id: docObject.id,
-  //     text: docObject.text,
-  //     createdAt: new Date(docObject.createdAt), 
-  //     ... docObject.data() 
-  //   })
-  //   });
-  //   setMessages(newMessages);
-  // };
-
-  //DEPRECATED: Add message - async
-  // const addMessage = async (newMessage) => {
-  //   const newMessageRef = await addDoc(collection(db, "messages"), newMessage);
-  //   if (newMessageRef.id) {
-  //     //Delete after test phase for better UX
-  //     Alert.alert(`New message ${newMessage.text} added`);
-  //   } else {
-  //     Alert.alert(`Unable to add message. Please try later`);
-  //   }
-  // };
 
   //Set navigation title to username
   useEffect(() => {

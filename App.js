@@ -1,4 +1,3 @@
-import { StyleSheet } from 'react-native';
 // import the screens
 import Start from './components/Start';
 import Chat from './components/Chat';
