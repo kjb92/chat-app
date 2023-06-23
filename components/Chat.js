@@ -48,9 +48,8 @@ const Chat = ({ route, navigation, db }) => {
       querySnapshot.forEach(doc => {
         newMessages.push({ 
           _id: doc.id,
-          text: doc.text,
-          createdAt: new Date(doc.createdAt), 
-          ... doc.data() 
+          ... doc.data(), 
+          createdAt: new Date(doc.data().createdAt.toMillis()), 
         })
       });
       setMessages(newMessages);
