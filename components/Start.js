@@ -1,7 +1,12 @@
 import { useState } from 'react';
-import { ImageBackground, StyleSheet, View, Text, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
+import { ImageBackground, StyleSheet, View, Text, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView, Alert } from 'react-native';
+//import firebase authentication functions
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 const Start = ({ navigation }) => {
+  //initialize Firebase authentication handler
+  const auth = getAuth();
+  
   //Get background image from local assets folder
   const imageBackground = require('../assets/background-image.png');
   //Get user icon from local assets folder
@@ -15,9 +20,22 @@ const Start = ({ navigation }) => {
   //Define an array of colors
   const colorHexCodes = ['#090C08', '#474056', '#8A95A5', '#B9C6AE'];
 
+  //allow user to sign-in anonymously
+  const signInUser = () => {
+    signInAnonymously(auth)
+      .then(result => {
+        navigation.navigate("Chat", { userID: result.user.uid, username: username, backgroundColor: backgroundColor });
+        Alert.alert("Signed in successfully!");
+      })
+      .catch((error) => {
+        Alert.alert("Unable to sign in, try again later.");
+      })
+  };
+
   //Function when "Start Chatting" is clicked
   const handleStartChatting = () => {
-    navigation.navigate('Chat', { username: username, backgroundColor: backgroundColor });
+    //sign  user in 
+    signInUser();
   };
 
   return (
@@ -140,7 +158,7 @@ const styles = StyleSheet.create({
   padding: 15,
  },
  textInputInner: {
-  opacity: 0.5,
+  opacity: 1,
  },
  button: {
   backgroundColor: '#757083',
