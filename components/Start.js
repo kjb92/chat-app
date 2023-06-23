@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ImageBackground, StyleSheet, View, Text, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
+import { ImageBackground, StyleSheet, View, Text, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView, Alert } from 'react-native';
 //import firebase authentication functions
 import { getAuth, signInAnonymously } from "firebase/auth";
 
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   padding: 15,
  },
  textInputInner: {
-  opacity: 0.5,
+  opacity: 1,
  },
  button: {
   backgroundColor: '#757083',
