@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { ImageBackground, StyleSheet, View, Text, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
+//import firebase authentication functions
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 const Start = ({ navigation }) => {
+  //initialize Firebase authentication handler
+  const auth = getAuth();
+  
   //Get background image from local assets folder
   const imageBackground = require('../assets/background-image.png');
   //Get user icon from local assets folder
@@ -17,7 +22,16 @@ const Start = ({ navigation }) => {
 
   //Function when "Start Chatting" is clicked
   const handleStartChatting = () => {
-    navigation.navigate('Chat', { username: username, backgroundColor: backgroundColor });
+    //sign  user in anonymously
+    signInAnonymously(auth)
+    .then(result => {
+      //navigate signed-in user to "Chat" passing the userID and backgroundColour
+      navigation.navigate("Chat", { userID: result.user.uid, backgroundColor: backgroundColor });
+      Alert.alert("Signed in successfully!");
+    })
+    .catch((error) => {
+      Alert.alert("Unable to sign in, try again later.");
+    })
   };
 
   return (
