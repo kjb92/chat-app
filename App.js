@@ -27,12 +27,21 @@ export default function App() {
     messagingSenderId: "302452061868",
     appId: "1:302452061868:web:7b6f2c0bae271f9d675109"
   };
+
+  //define state that represents the network connectivity status
+  const connectionStatus = useNetInfo();
   
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
 
   // Initialize Cloud Firestore and get a reference to the service
   const db = getFirestore(app);
+
+  //display alert if connection is lost
+  useEffect(() => {
+    if (connectionStatus.isConnected === false) 
+      Alert.alert("Connection lost!")
+  }, [connectionStatus.isConnected]);
 
   return (
     <NavigationContainer>
