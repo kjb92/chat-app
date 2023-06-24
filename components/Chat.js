@@ -11,7 +11,6 @@ const Chat = ({ route, navigation, db, isConnected }) => {
   const { username, backgroundColor, userID } = route.params;
   //Messages state
   const [messages, setMessages] = useState([]);
-  
   //Send function
   const onSend = (newMessages) => {
     //TBD: addDoc in Forestore
@@ -19,7 +18,6 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     //Update messages
     setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages))
     };
-    
   //Chat bubble customization
   const renderBubble = (props) => {
     return <Bubble
@@ -34,13 +32,27 @@ const Chat = ({ route, navigation, db, isConnected }) => {
       }}
     />
   };
+  //Cache messages
+  const cacheMessages = async (messagesToCache) => {
+    try {
+      await AsyncStorage.setItem("messages", JSON.stringify(messagesToCache));
+      } catch (error) {
+        console.log(error.message);
+      } 
+  };
+
+  //Load cached messages
+  const loadCachedMessages = async () => {
+    const cachedMessages = await AsyncStorage.getItem("messages") || [];
+    setMessages(JSON.parse(cacheMessages));
+  };
 
   //Set navigation title to username
   useEffect(() => {
     navigation.setOptions({ title: username });
   }, []);
 
-  //Get messages from Firestore 
+  //Get messages from Firestore OR Cache
   let unsubMessages; //declare unsubMessages outside of useEffect scope
   useEffect(()=> {
     //IF: device IS connected to the internet -> fetch messages from Firestore
@@ -74,21 +86,6 @@ const Chat = ({ route, navigation, db, isConnected }) => {
       if (unsubMessages) unsubMessages();
     }
   }, [isConnected]);//dependency on conenction status
-
-  //Cache messages
-  const cacheMessages = async (messagesToCache) => {
-    try {
-      await AsyncStorage.setItem("messages", JSON.stringify(messagesToCache));
-      } catch (error) {
-        console.log(error.message);
-      } 
-  };
-
-  //Load cached messages
-  const loadCachedMessages = async () => {
-    const cachedMessages = await AsyncStorage.getItem("messages") || [];
-    setMessages(JSON.parse(cacheMessages));
-  };
 
   //Render chat UI
   return (
