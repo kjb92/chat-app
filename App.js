@@ -7,6 +7,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 //import Cloud Firestore
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+//import NetInfo to get information about connection type and connection quality
+import { useNetInfo }from '@react-native-community/netinfo';
 
 // Create the navigator
 const Stack = createNativeStackNavigator();
