@@ -6,7 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 //import Cloud Firestore
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, disableNetwork, enableNetwork } from "firebase/firestore";
 //import NetInfo to get information about connection type and connection quality
 import { useNetInfo }from '@react-native-community/netinfo';
 //import useEffect
@@ -39,8 +39,12 @@ export default function App() {
 
   //display alert if connection is lost
   useEffect(() => {
-    if (connectionStatus.isConnected === false) 
-      Alert.alert("Connection lost!")
+    if (connectionStatus.isConnected === false) {
+      Alert.alert("Connection lost!");
+      disableNetwork(db);
+    } else if (connectionStatus.isConnected === true) {
+      enableNetwork(db);
+    }
   }, [connectionStatus.isConnected]);
 
   return (
