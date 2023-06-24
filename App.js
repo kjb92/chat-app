@@ -60,7 +60,7 @@ export default function App() {
           name="Chat"
         >
           {/* Passing the database on to the chats screen */}
-          {props => <Chat db={db} {...props} />}
+          {props => <Chat isConnected={connectionStatus.isConnected} db={db} {...props} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

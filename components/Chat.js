@@ -6,7 +6,7 @@ import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firesto
 //import local storage package - async-storage
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Chat = ({ route, navigation, db }) => {
+const Chat = ({ route, navigation, db, isConnected }) => {
   //Get username and background color form route parameters
   const { username, backgroundColor, userID } = route.params;
   //Messages state
@@ -40,38 +40,54 @@ const Chat = ({ route, navigation, db }) => {
     navigation.setOptions({ title: username });
   }, []);
 
-  //Get messages from Firestore
+  //Get messages from Firestore 
+  let unsubMessages; //declare unsubMessages outside of useEffect scope
   useEffect(()=> {
-    //define the query
-    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-    //define the snapshop function
-    const unsubMessages = onSnapshot(q, (querySnapshot) => {
-      let newMessages = [];
-      querySnapshot.forEach(doc => {
-        newMessages.push({ 
-          _id: doc.id,
-          ... doc.data(), 
-          createdAt: new Date(doc.data().createdAt.toMillis()), 
-        })
+    //IF: device IS connected to the internet -> fetch messages from Firestore
+    if (isConnected === true) {  
+      // unregister current onSnapshot() listener to avoid registering multiple listeners when
+      // useEffect code is re-executed.
+      if (unsubMessages) unsubMessages();
+      unsubMessages = null;
+      
+      //define the query
+      const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+      //define the snapshop function
+      unsubMessages = onSnapshot(q, (querySnapshot) => {
+        let newMessages = [];
+        querySnapshot.forEach(doc => {
+          newMessages.push({ 
+            _id: doc.id,
+            ... doc.data(), 
+            createdAt: new Date(doc.data().createdAt.toMillis()), 
+          })
+        });
+        //cache data
+        cacheMessages(newMessages);
+        //update messages state
+        setMessages(newMessages);
       });
-      //cache data
-      cacheMessages(newMessages);
-      //update messages state
-      setMessages(newMessages);
-    });
+    } else loadCachedMessages(); //IF device IS NOT connected to the internet -> load cached messages
 
-    //Clean up code and protection against call failure
+    //Code clean-up and protection against call failure
     return () => {
       if (unsubMessages) unsubMessages();
     }
-  }, []);
+  }, [isConnected]);//dependency on conenction status
 
+  //Cache messages
   const cacheMessages = async (messagesToCache) => {
     try {
       await AsyncStorage.setItem("messages", JSON.stringify(messagesToCache));
       } catch (error) {
         console.log(error.message);
       } 
+  };
+
+  //Load cached messages
+  const loadCachedMessages = async () => {
+    const cachedMessages = await AsyncStorage.getItem("messages") || [];
+    setMessages(JSON.parse(cacheMessages));
   };
 
   //Render chat UI
