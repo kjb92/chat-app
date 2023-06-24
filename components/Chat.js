@@ -3,6 +3,8 @@ import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { Bubble, GiftedChat } from 'react-native-gifted-chat';
 //Import get data functions from Firestore
 import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+//import local storage package - async-storage
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Chat = ({ route, navigation, db }) => {
   //Get username and background color form route parameters
