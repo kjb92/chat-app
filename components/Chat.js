@@ -54,6 +54,9 @@ const Chat = ({ route, navigation, db }) => {
           createdAt: new Date(doc.data().createdAt.toMillis()), 
         })
       });
+      //cache data
+      cacheMessages(newMessages);
+      //update messages state
       setMessages(newMessages);
     });
 
@@ -62,6 +65,14 @@ const Chat = ({ route, navigation, db }) => {
       if (unsubMessages) unsubMessages();
     }
   }, []);
+
+  const cacheMessages = async (messagesToCache) => {
+    try {
+      await AsyncStorage.setItem("messages", JSON.stringify(messagesToCache));
+      } catch (error) {
+        console.log(error.message);
+      } 
+  };
 
   //Render chat UI
   return (
