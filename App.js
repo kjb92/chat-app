@@ -9,6 +9,10 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 //import NetInfo to get information about connection type and connection quality
 import { useNetInfo }from '@react-native-community/netinfo';
+//import useEffect
+import { useEffect } from 'react';
+//import Alert
+import { LogBox, Alert } from 'react-native/types';
 
 // Create the navigator
 const Stack = createNativeStackNavigator();
