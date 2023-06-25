@@ -5,6 +5,9 @@ import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
 //import local storage package - async-storage
 import AsyncStorage from "@react-native-async-storage/async-storage";
+//import ImagePicker
+import * as ImagePicker from 'expo-image-picker';
+
 
 const Chat = ({ route, navigation, db, isConnected }) => {
   //Get username and background color form route parameters
@@ -45,6 +48,8 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         console.log(error.message);
       } 
   };
+  //Image state
+  const [image, setImage] = useState(null);
 
   //Load cached messages
   const loadCachedMessages = async () => {
