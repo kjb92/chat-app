@@ -110,7 +110,11 @@ const CustomActions = ({
  //Render CustomActions UI
  return (
   <TouchableOpacity 
-    style={[styles.container]}
+  accessible={true}
+  accessibilityRole="button"
+  accessibilityLabel="Button to open custom chat actions"
+  accessibilityHint="Choose from a list of custom actions such as: Choose a photo, take a photo or send location"  
+  style={[styles.container]}
     onPress={onActionPress}
     >
       <View style={[styles.wrapper, wrapperStyle]}>
