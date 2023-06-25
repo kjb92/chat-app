@@ -53,16 +53,22 @@ const Chat = ({ route, navigation, db, storage, isConnected }) => {
     if (currentMessage.location) {
       return (
           <MapView
-            style={{width: 150,
-              height: 100,
-              borderRadius: 13,
-              margin: 3}}
-            region={{
-              latitude: currentMessage.location.latitude,
-              longitude: currentMessage.location.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
+            style={
+              {
+                width: 150,
+                height: 100,
+                borderRadius: 13,
+                margin: 3
+              }
+            }
+            region={
+              {
+                latitude: currentMessage.location.latitude,
+                longitude: currentMessage.location.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421
+              }
+            }
           />
       );
     }
