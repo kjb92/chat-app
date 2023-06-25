@@ -7,7 +7,8 @@ import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firesto
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //import ImagePicker
 import * as ImagePicker from 'expo-image-picker';
-
+//import CustomActions
+import CustomActions from './CustomActions';
 
 const Chat = ({ route, navigation, db, isConnected }) => {
   //Get username and background color form route parameters
@@ -40,7 +41,11 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     if (isConnected) return <InputToolbar {...props} />;
     else return null;
    }
-  //Cache messages
+  //CustomActions customization
+  const renderCustomActions = (props) => {
+    return <CustomActions userID={userID} storage={storage} {...props} />;
+};
+   //Cache messages
   const cacheMessages = async (messagesToCache) => {
     try {
       await AsyncStorage.setItem("messages", JSON.stringify(messagesToCache));
@@ -48,8 +53,6 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         console.log(error.message);
       } 
   };
-  //Image state
-  const [image, setImage] = useState(null);
 
   //Load cached messages
   const loadCachedMessages = async () => {
@@ -104,6 +107,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         messages={messages}
         renderBubble={renderBubble}
         renderInputToolbar={renderInputToolbar}
+        renderActions={renderCustomActions}
         onSend={messages => onSend(messages)}
         user={{
           _id: userID,
