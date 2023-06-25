@@ -49,7 +49,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
   //Load cached messages
   const loadCachedMessages = async () => {
     const cachedMessages = await AsyncStorage.getItem("messages") || [];
-    setMessages(JSON.parse(cacheMessages));
+    setMessages(JSON.parse(cachedMessages));
   };
 
   //Set navigation title to username
