@@ -6,11 +6,14 @@ import { useActionSheet } from "@expo/react-native-action-sheet";
 import * as ImagePicker from 'expo-image-picker';
 //Import Location from @expo-location
 import * as Location from 'expo-location';
+//Import Ref for creating an address for file locations
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 const CustomActions = ({
   wrapperStyle, 
   iconTextStyle,
   onSend,
+  storage,
   userID
 }) => {
   //Call actionSheet
@@ -19,30 +22,47 @@ const CustomActions = ({
   const [image, setImage] = useState(null);
   //Location state
   const [location, setLocation] = useState(null);
+  //Generate image reference function
+  const generateReference = (uri) => {
+    const timeStamp = (new Date()).getTime();
+    const imageName = uri.split("/")[uri.split("/").length - 1];
+    return `${userID}-${timeStamp}-${imageName}`;
+  };
+  //Upload & Send Image function
+  const uploadAndSendImage = async (imageURI) => {
+    const uniqueRefString = generateReference(imageURI);
+    const newUploadRef = ref(storage, uniqueRefString);
+    const response = await fetch(imageURI);
+    const blob = await response.blob();
+    uploadBytes(newUploadRef, blob).then(async (snapshot) => {
+      const imageURL = await getDownloadURL(snapshot.ref)
+      onSend({ image: imageURL })
+    });
+  };
   
-  //Define pickImage
+  //pickImage
   const pickImage = async () => {
     let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (permissions?.granted) {
        let result = await ImagePicker.launchImageLibraryAsync();
 
-      if (!result.canceled) setImage(result.assets[0]);
-      else setImage(null)
+       if (!result.canceled) await uploadAndSendImage(result.assets[0].uri);
+       else Alert.alert("Permissions haven't been granted.");
     }
   };
-  //Define takeImage
+  //takeImage
   const takePhoto = async () => {
     let permissions = await ImagePicker.requestCameraPermissionsAsync();
 
     if (permissions?.granted) {
       let result = await ImagePicker.launchCameraAsync();
 
-      if (!result.canceled) setImage(result.assets[0]);
-      else setImage(null)
+      if (!result.canceled) await uploadAndSendImage(result.assets[0]);
+      else Alert.alert("Permissions haven't been granted.");
     }
   };
-  //Define getLocation
+  //getLocation
   const getLocation = async () => {
     let permissions = await Location.requestForegroundPermissionsAsync();
     if (permissions?.granted) {

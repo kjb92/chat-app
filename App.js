@@ -13,6 +13,9 @@ import { useNetInfo }from '@react-native-community/netinfo';
 import { useEffect } from 'react';
 //import Alert
 import { Alert } from 'react-native';
+//import Firestore Storage for Image Files
+import { getStorage } from "firebase/storage";
+
 
 // Create the navigator
 const Stack = createNativeStackNavigator();
@@ -36,6 +39,8 @@ export default function App() {
 
   // Initialize Cloud Firestore and get a reference to the service
   const db = getFirestore(app);
+  // Initialize Firestore Storage
+  const storage = getStorage(app);
 
   //display alert if connection is lost
   useEffect(() => {
@@ -60,7 +65,11 @@ export default function App() {
           name="Chat"
         >
           {/* Passing the database on to the chats screen */}
-          {props => <Chat isConnected={connectionStatus.isConnected} db={db} {...props} />}
+          {props => <Chat 
+            isConnected={connectionStatus.isConnected} 
+            db={db} 
+            storage={storage}
+            {...props} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
