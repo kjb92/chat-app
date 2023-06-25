@@ -12,7 +12,7 @@ import { useNetInfo }from '@react-native-community/netinfo';
 //import useEffect
 import { useEffect } from 'react';
 //import Alert
-import { LogBox, Alert } from 'react-native/types';
+import { Alert } from 'react-native';
 
 // Create the navigator
 const Stack = createNativeStackNavigator();
