@@ -3,6 +3,9 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useActionSheet } from "@expo/react-native-action-sheet";
 //import ImagePicker
 import * as ImagePicker from 'expo-image-picker';
+//Import Location & MapView
+import * as Location from 'expo-location';
+import MapView from 'react-native-maps';
 
 const CustomActions = ({
   wrapperStyle, 
@@ -14,6 +17,9 @@ const CustomActions = ({
   const actionSheet = useActionSheet();
   //Image state
   const [image, setImage] = useState(null);
+  //Location state
+  const [location, setLocation] = useState(null);
+  
   //Define pickImage
   const pickImage = async () => {
     let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -37,10 +43,17 @@ const CustomActions = ({
     }
   };
   //Define getLocation
-  const getLocation = () => {
-    
-  };
+  const getLocation = async () => {
+    let permissions = await Location.requestForegroundPermissionsAsync();
 
+    if (permissions?.granted) {
+      const location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    } else {
+      Alert.alert("Permissions to read location aren't granted");
+    }
+  };
+  
   //Define onActionPress function
   const onActionPress = () => {
     const options = ['Choose From Library', 'Take Picture', 'Send Location', 'Cancel'];
