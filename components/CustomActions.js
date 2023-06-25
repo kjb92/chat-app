@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native';
 //IMport ActionSheet from @expo
 import { useActionSheet } from "@expo/react-native-action-sheet";
 //import ImagePicker
@@ -58,7 +58,7 @@ const CustomActions = ({
     if (permissions?.granted) {
       let result = await ImagePicker.launchCameraAsync();
 
-      if (!result.canceled) await uploadAndSendImage(result.assets[0]);
+      if (!result.canceled) await uploadAndSendImage(result.assets[0].uri);
       else Alert.alert("Permissions haven't been granted.");
     }
   };
@@ -100,6 +100,7 @@ const CustomActions = ({
           case 2:
             console.log('user wants to get their location');
             getLocation();
+            return; 
           default:
         }
       },
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
   iconText: {
     color: '#b2b2b2',
     fontWeight: 'bold',
-    fontSize: 10,
+    fontSize: 16,
     backgroundColor: 'transparent',
     textAlign: 'center',
   },
