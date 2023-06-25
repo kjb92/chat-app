@@ -9,6 +9,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from 'expo-image-picker';
 //import CustomActions
 import CustomActions from './CustomActions';
+//Import MapView
+import MapView from 'react-native-maps';
 
 const Chat = ({ route, navigation, db, isConnected }) => {
   //Get username and background color form route parameters
@@ -44,7 +46,28 @@ const Chat = ({ route, navigation, db, isConnected }) => {
   //CustomActions customization
   const renderCustomActions = (props) => {
     return <CustomActions userID={userID} storage={storage} {...props} />;
-};
+  };
+  //CustomView (Map)
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+          <MapView
+            style={{width: 150,
+              height: 100,
+              borderRadius: 13,
+              margin: 3}}
+            region={{
+              latitude: currentMessage.location.latitude,
+              longitude: currentMessage.location.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          />
+      );
+    }
+    return null;
+  };
    //Cache messages
   const cacheMessages = async (messagesToCache) => {
     try {
@@ -53,7 +76,6 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         console.log(error.message);
       } 
   };
-
   //Load cached messages
   const loadCachedMessages = async () => {
     const cachedMessages = await AsyncStorage.getItem("messages") || [];
@@ -108,6 +130,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         renderBubble={renderBubble}
         renderInputToolbar={renderInputToolbar}
         renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
         onSend={messages => onSend(messages)}
         user={{
           _id: userID,
@@ -117,7 +140,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
       {/* Keyboard-Fix for android */}
       {Platform.OS === 'android' ? <KeyboardAvoidingView behavior='height' /> : null}
     </View>
- );
+  );
 };
 
 //StyleSheet for Chat.js

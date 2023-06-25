@@ -3,13 +3,13 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useActionSheet } from "@expo/react-native-action-sheet";
 //import ImagePicker
 import * as ImagePicker from 'expo-image-picker';
-//Import Location & MapView
+//Import Location from @expo-location
 import * as Location from 'expo-location';
-import MapView from 'react-native-maps';
 
 const CustomActions = ({
   wrapperStyle, 
   iconTextStyle,
+  onSend,
   storage,
   userID
 }) => {
@@ -45,13 +45,17 @@ const CustomActions = ({
   //Define getLocation
   const getLocation = async () => {
     let permissions = await Location.requestForegroundPermissionsAsync();
-
     if (permissions?.granted) {
       const location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    } else {
-      Alert.alert("Permissions to read location aren't granted");
-    }
+      if (location) {
+        onSend({
+          location: {
+            longitude: location.coords.longitude,
+            latitude: location.coords.latitude,
+          },
+        });
+      } else Alert.alert("Error occurred while fetching location");
+    } else Alert.alert("Permissions haven't been granted.");
   };
   
   //Define onActionPress function
