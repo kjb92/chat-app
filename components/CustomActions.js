@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 //IMport ActionSheet from @expo
 import { useActionSheet } from "@expo/react-native-action-sheet";
@@ -10,7 +11,6 @@ const CustomActions = ({
   wrapperStyle, 
   iconTextStyle,
   onSend,
-  storage,
   userID
 }) => {
   //Call actionSheet
