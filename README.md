@@ -71,10 +71,16 @@ Follow instructions to get a copy of the project up and running on your local ma
    
 6. Copy this configuration object to your clipboard.
 
-7. In your project, create a new `.env` file in the root of your project and add your firebase configuration to it as a JSON object like this:
+7. In your project, update the `app.config.js` file with your firebase configuration like this:
 
    ```
-   FIREBASE_CONFIG={"apiKey":"AIzaSy...","authDomain":"my-app.firebaseapp.com","databaseURL":"https://my-app.firebaseio.com","projectId":"my-app","storageBucket":"my-app.appspot.com","messagingSenderId":"123456789","appId":"1:1234:web:ee873bd1234b2a1f4ee234","measurementId":"G-12345"}
+   export default {
+      expo: {
+         extra: {
+            FIREBASE_CONFIG: '{"apiKey":"AIzaSy...", "authDomain":"my-app.firebaseapp.com", "databaseURL":"https://my-app.firebaseio.com", "projectId":"my-app", "storageBucket":"my-app.appspot.com", "messagingSenderId":"123456789", "appId":"1:1234:web:ee873bd1234b2a1f4ee234", "measurementId":"G-12345"}',
+         },
+      },
+   };
    ```
 
 8. In the Firebase console, navigate to the "Cloud Firestore" section and create a new database. Start in test mode.

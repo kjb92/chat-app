@@ -15,16 +15,18 @@ import { useEffect } from 'react';
 import { Alert } from 'react-native';
 //import Firestore Storage for Image Files
 import { getStorage } from "firebase/storage";
-//import dotenv
-require('dotenv').config();
-
+//import Constants for env-variables
+import Constants from 'expo-constants';
 
 // Create the navigator
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   // This web app's Firebase configuration
-  const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG);
+  const firebaseConfig = JSON.parse(Constants.manifest.extra.FIREBASE_CONFIG);
+
+  //test
+  console.log(JSON.parse(Constants.manifest.extra.FIREBASE_CONFIG));
 
   //define state that represents the network connectivity status
   const connectionStatus = useNetInfo();
